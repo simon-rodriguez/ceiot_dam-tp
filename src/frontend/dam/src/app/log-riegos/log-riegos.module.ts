@@ -7,6 +7,9 @@ import { IonicModule } from '@ionic/angular';
 import { LogRiegosPageRoutingModule } from './log-riegos-routing.module';
 
 import { LogRiegosPage } from './log-riegos.page';
+import { TransformarEstadoPipe } from '../pipes/transformar-estado.pipe';
+
+
 
 @NgModule({
   imports: [
@@ -15,6 +18,6 @@ import { LogRiegosPage } from './log-riegos.page';
     IonicModule,
     LogRiegosPageRoutingModule
   ],
-  declarations: [LogRiegosPage]
+  declarations: [LogRiegosPage, TransformarEstadoPipe]
 })
 export class LogRiegosPageModule {}

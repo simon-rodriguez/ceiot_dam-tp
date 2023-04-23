@@ -59,7 +59,8 @@ app.get('/devices', auth, function(req, res, next) {
 });
 
 // Devuelve información de un solo dispositivo
-app.get('/devices/:id', auth, function(req, res, next) {
+app.get('/devices/:id', function(req, res, next) {
+    console.log("Devices recibe ", req.params.id)
     pool.query('SELECT * FROM Dispositivos WHERE dispositivoId = ?;', [req.params.id], (err, result) => {
         if (err) {
             res.send(err).status(400);
@@ -70,7 +71,8 @@ app.get('/devices/:id', auth, function(req, res, next) {
 });
 
 // Devuelve la ultima medición de un dispositivo
-app.get('/lastmeasurement/:id', auth, function(req, res, next) {
+app.get('/lastmeasurement/:id', function(req, res, next) {
+    console.log("Last M recibe ", req.params.id)
     pool.query('SELECT * FROM Mediciones WHERE dispositivoId = ? order by fecha desc limit 1;', [req.params.id], (err, result) => {
         if (err) {
             res.send(err).status(400);
@@ -81,7 +83,8 @@ app.get('/lastmeasurement/:id', auth, function(req, res, next) {
 });
 
 // Devuelve todas las mediciones de un dispositivo
-app.get('/measurements/:id', auth, function(req, res, next) {
+app.get('/measurements/:id', function(req, res, next) {
+    console.log("Measurements recibe ", req.params.id)
     pool.query('SELECT * FROM Mediciones WHERE dispositivoId = ?;', [req.params.id], (err, result) => {
         if (err) {
             res.send(err).status(400);
@@ -92,7 +95,8 @@ app.get('/measurements/:id', auth, function(req, res, next) {
 });
 
 // Devuelve todos los registros de riego de una electroválvula en particular
-app.get('/waterlog/:id', auth, function(req, res, next) {
+app.get('/waterlog/:id', function(req, res, next) {
+    console.log("Waterlog recibe ", req.params.id)
     pool.query('SELECT * FROM Log_Riegos a join Dispositivos b on a.electrovalvulaId = b.electrovalvulaId WHERE b.dispositivoId = ?;', [req.params.id], (err, result) => {
         if (err) {
             res.send(err).status(400);
@@ -101,6 +105,45 @@ app.get('/waterlog/:id', auth, function(req, res, next) {
         res.send(result);
     });
 });
+
+// Cambiar estado de la válvula (con query en el path ../ --> URL/key1=param1&key2=param2&...&keyN=paramN)
+app.post('/changestate', (req, res) => {
+    console.log("Changestate recibe ", req.body.apertura, ' ', req.body.fecha, ' ', req.body.electrovalvulaId)
+    if (req.body.apertura !=undefined && req.body.fecha!=undefined && req.body.electrovalvulaId!=undefined) {
+        console.log("Parametros recibidos correctamente.")
+        pool.query('INSERT INTO `Log_Riegos` (`apertura`, `fecha`, `electrovalvulaId`) VALUES (?,?,?);', [req.body.apertura, req.body.fecha, req.body.electrovalvulaId], (err, result) => {
+            if (err) {
+                res.send(err).status(400);
+                return;
+            }
+            res.send(result);
+        });
+    }
+    else {
+        console.log("ERROR: Parametros incorrectos o no recibidos.");
+        res.sendStatus(400);
+    }
+});
+
+// Actualizar las mediciones
+app.post('/updatemeasurements', (req, res) => {
+    console.log("Updatemeasurements recibe ", req.body.fecha, ' ', req.body.valor, ' ', req.body.dispositivoId)
+    if (req.body.fecha !=undefined && req.body.valor!=undefined && req.body.dispositivoId!=undefined) {
+        console.log("Parametros recibidos correctamente.")
+        pool.query('INSERT INTO `Mediciones` (`fecha`, `valor`, `dispositivoId`) VALUES (?,?,?);', [req.body.fecha, req.body.valor, req.body.dispositivoId], (err, result) => {
+            if (err) {
+                res.send(err).status(400);
+                return;
+            }
+            res.send(result);
+        });
+    }
+    else {
+        console.log("ERROR: Parametros incorrectos o no recibidos.");
+        res.sendStatus(400);
+    }
+});
+
 
 app.post('/authenticate', (req, res) => {
 

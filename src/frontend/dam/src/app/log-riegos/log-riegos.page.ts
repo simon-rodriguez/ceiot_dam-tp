@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class LogRiegosPage implements OnInit {
 
-  dispositivos: any = [];
+  registros: any = [];
   dispositivoId: string = '';
   ready: boolean = false; 
 
@@ -17,11 +17,16 @@ export class LogRiegosPage implements OnInit {
 
   ngOnInit() {
     this.dispositivoId = this.rutaActiva.snapshot.paramMap.get('id')!;
-    const respuesta = this._LogServices.getRegistroRiego(parseInt(this.dispositivoId));
-    this.dispositivos = respuesta;
-    console.log(respuesta); 
-    console.log("Registro de Riegos");
-    this.ready = true;
+    this._LogServices.getRegistroRiego(parseInt(this.dispositivoId))
+    .then((respuesta:any) => {
+      this.registros = respuesta;
+      console.log(respuesta);
+      this.ready = true;
+      console.log("Registro de Riegos");
+    })
+      .catch((error) => {
+      console.log(error)
+    })
   }
 
 
