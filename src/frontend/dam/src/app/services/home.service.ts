@@ -6,15 +6,11 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root'
 })
 export class HomeService {
-  uri = 'http://localhost:8000'
 
   // config = {
   //   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   // }
 
-  constructor(private _http: HttpClient) { }
+  constructor() { }
 
-  consulta () {
-    return firstValueFrom(this._http.get(`${this.uri}/prueba`))
-  }
 }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { HomeService } from '../services/home.service';
+import { Dispositivo } from '../Interfaces/dispositivos';
+import { DispositivoService } from '../services/dispositivo.service';
 
 @Component({
   selector: 'app-home',
@@ -8,16 +10,28 @@ import { HomeService } from '../services/home.service';
 })
 export class HomePage {
 
-  constructor(private _homeService: HomeService) {}
+  dispositivos: Dispositivo[] = [];
 
-  consultarService () {
+  constructor(private _homeService: DispositivoService) {}
+
+  async ngOnInit() {
     this._homeService.consulta()
-      .then((respuesta) => {
-        console.log(respuesta)
+      .then((respuesta:any) => {
+        this.dispositivos = respuesta;
       })
       .catch((error) => {
         console.log(error)
       })
   }
 
+  getUpdatedDevices() {
+    this._homeService.consulta()
+    .then((respuesta:any) => {
+      console.log('Actualizado');
+      this.dispositivos = respuesta;
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
 }

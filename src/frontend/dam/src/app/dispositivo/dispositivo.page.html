@@ -1,17 +1,26 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Dispositivo</ion-title>
-    <!-- <ion-title>dispositivo {{ observable$ | async }}</ion-title> -->
+    <ion-title *ngIf="ready">Dispositivo {{dispositivoId}} - {{dispositivos[0].nombre}} </ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/home">Home</ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <button (click)="unsubscribe()">Unsub</button>
-  <br>
-  <button (click)="subscribe()">Sub</button>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">dispositivo</ion-title>
+      <ion-title size="large">Dispositivo </ion-title>
     </ion-toolbar>
   </ion-header>
+
+<!-- Condicional para el boton de abrir o cerrar la válvula dependiendo del estado de la misma -->
+
+<ion-button *ngIf="!valvulaAbierta" (click)="abrirValvula()">Abrir Válvula</ion-button>
+<ion-button *ngIf="valvulaAbierta" (click)="cerrarValvula()">Cerrar Válvula</ion-button>
+
+<ion-button routerLink="/mediciones">Ver todas las mediciones</ion-button>
+<ion-button routerLink="/log-riegos">Ver el Log de Riegos</ion-button>
+
+
 </ion-content>

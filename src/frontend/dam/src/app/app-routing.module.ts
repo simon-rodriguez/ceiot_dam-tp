@@ -14,14 +14,27 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'dispositivo',
+    path: 'dispositivo/:id',
     loadChildren: () => import('./dispositivo/dispositivo.module').then( m => m.DispositivoPageModule),
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'devices',
+    redirectTo: 'home'
   },
   {
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginModule)
   },
+  {
+    path: 'mediciones',
+    loadChildren: () => import('./mediciones/mediciones.module').then( m => m.MedicionesPageModule)
+  },
+  {
+    path: 'log-riegos',
+    loadChildren: () => import('./log-riegos/log-riegos.module').then( m => m.LogRiegosPageModule)
+  }
+
 ];
 
 @NgModule({

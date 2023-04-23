@@ -1,20 +1,38 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Home - Dispositivos
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="getUpdatedDevices()">Refrescar Lista de Dispositivos</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Lista de Dispositivos</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <ion-button (click)="consultarService()">Consulta prueba</ion-button>
-    <ion-button routerLink="/dispositivo/1">Dispositivo 1</ion-button>
+  <div id="contenido">
+    <ion-card *ngFor="let dispositivo of dispositivos">
+      <ion-card-header>
+        <ion-toolbar>
+          <ion-title>{{ dispositivo.nombre }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button routerLink="/dispositivo/{{dispositivo.dispositivoId}}">Ver detalles</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Ubicación: {{ dispositivo.ubicacion }}</p>
+        <p>ID del dispositivo: {{ dispositivo.dispositivoId }}</p>
+        <p>Estado: **</p>
+        <p>Última Medición: **</p>
+      </ion-card-content>
+    </ion-card>
   </div>
+
 </ion-content>

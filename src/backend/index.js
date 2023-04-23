@@ -45,11 +45,55 @@ app.use(cors(corsOptions));
 //=======[ Main module code ]==================================================
 
 app.get('/', function(req, res, next) {
-    res.send({'mensaje': 'Hola DAM'}).status(200);
+    res.send({'mensaje': 'Bienvenidos a DAM'}).status(200);
 });
 
-app.get('/devices/', auth, function(req, res, next) {
-    pool.query('Select * from Devices', function(err, result, fields) {
+app.get('/devices', auth, function(req, res, next) {
+    pool.query('Select * from Dispositivos', function(err, result, fields) {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send(result);
+    });
+});
+
+// Devuelve información de un solo dispositivo
+app.get('/devices/:id', auth, function(req, res, next) {
+    pool.query('SELECT * FROM Dispositivos WHERE dispositivoId = ?;', [req.params.id], (err, result) => {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send(result);
+    });
+});
+
+// Devuelve la ultima medición de un dispositivo
+app.get('/lastmeasurement/:id', auth, function(req, res, next) {
+    pool.query('SELECT * FROM Mediciones WHERE dispositivoId = ? order by fecha desc limit 1;', [req.params.id], (err, result) => {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send(result);
+    });
+});
+
+// Devuelve todas las mediciones de un dispositivo
+app.get('/measurements/:id', auth, function(req, res, next) {
+    pool.query('SELECT * FROM Mediciones WHERE dispositivoId = ?;', [req.params.id], (err, result) => {
+        if (err) {
+            res.send(err).status(400);
+            return;
+        }
+        res.send(result);
+    });
+});
+
+// Devuelve todos los registros de riego de una electroválvula en particular
+app.get('/waterlog/:id', auth, function(req, res, next) {
+    pool.query('SELECT * FROM Log_Riegos a join Dispositivos b on a.electrovalvulaId = b.electrovalvulaId WHERE b.dispositivoId = ?;', [req.params.id], (err, result) => {
         if (err) {
             res.send(err).status(400);
             return;
@@ -82,10 +126,6 @@ app.post('/authenticate', (req, res) => {
     }
 
 });
-
-app.get('/prueba', auth, function(req, res) {
-    res.send({ meesage: "Todo ok mando data" })
-})
 
 app.listen(PORT, function(req, res) {
     console.log("NodeJS API running correctly");

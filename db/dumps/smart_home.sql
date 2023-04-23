@@ -7,9 +7,9 @@
 -- Server version: 5.7.26-0ubuntu0.16.04.1
 -- PHP Version: 7.0.33-0ubuntu0.16.04.4
 
-CREATE DATABASE IF NOT EXISTS smart_home;
+CREATE DATABASE IF NOT EXISTS BD_DAM_TP;
 
-USE smart_home;
+USE BD_DAM_TP;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -23,55 +23,160 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `smart_home`
+-- Database: `BD_DAM_TP`
 --
+
+--
+-- Estructura de la tabla `Dispositivos`
+--
+
+CREATE TABLE `Dispositivos` (
+  `dispositivoId` int(11) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `ubicacion` varchar(200) NOT NULL,
+  `electrovalvulaId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `Dispositivos`
+--
+
+INSERT INTO `Dispositivos` (`dispositivoId`, `nombre`, `ubicacion`, `electrovalvulaId`) VALUES
+(1, 'Sensor 1', 'Patio', 1),
+(2, 'Sensor 2', 'Cocina', 2),
+(3, 'Sensor 3', 'Jardin Delantero', 3),
+(4, 'Sensor 4', 'Living', 4),
+(5, 'Sensor 5', 'Habitacion 1', 5),
+(6, 'Sensor 6', 'Habitacion 2', 6);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `Devices`
+-- Estructura de la tabla `Electrovalvulas`
 --
 
-CREATE TABLE `Devices` (
-  `id` int(11) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `description` varchar(128) NOT NULL,
-  `state` int(11) NOT NULL,
-  `type` int(11) NOT NULL
+CREATE TABLE `Electrovalvulas` (
+  `electrovalvulaId` int(11) NOT NULL,
+  `nombre` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `Devices`
+-- Volcado de datos para la tabla `Electrovalvulas`
 --
 
-INSERT INTO `Devices` (`id`, `name`, `description`, `state`, `type`) VALUES
-(1, 'Lampara 1', 'Luz living', 1, 0),
-(2, 'Lampara 2', 'Luz cocina', 0, 0),
-(3, 'Velador', 'Velador living', 1, 0),
-(4, 'Persiana 1', 'Persiana living', 1, 1),
-(5, 'Persiana 2', 'Persiana de la cocina', 1, 1),
-(6, 'Persiana 3', 'Persiana balcon', 0, 1);
+INSERT INTO `Electrovalvulas` (`electrovalvulaId`, `nombre`) VALUES
+(1, 'EV Patio'),
+(2, 'EV Cocina'),
+(3, 'EV Jardin Delantero'),
+(4, 'EV Living'),
+(5, 'EV Habitacion1'),
+(6, 'EV Habitacion2');
+
+-- --------------------------------------------------------
 
 --
--- Indexes for dumped tables
+-- Estructura de la tabla `Log_Riegos`
+--
+
+CREATE TABLE `Log_Riegos` (
+  `logRiegoId` int(11) NOT NULL,
+  `apertura` tinyint(4) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `electrovalvulaId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de la tabla `Mediciones`
+--
+
+CREATE TABLE `Mediciones` (
+  `medicionId` int(11) NOT NULL,
+  `fecha` datetime NOT NULL,
+  `valor` varchar(100) NOT NULL,
+  `dispositivoId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `Mediciones`
+--
+
+INSERT INTO `Mediciones` (`medicionId`, `fecha`, `valor`, `dispositivoId`) VALUES
+(1, '2023-04-22 08:30:00', '60', 1),
+(2, '2023-04-22 09:15:00', '40', 1),
+(3, '2023-04-22 10:00:00', '30', 2),
+(4, '2023-04-22 11:00:00', '50', 3),
+(5, '2023-04-22 12:00:00', '33', 5),
+(6, '2023-04-22 13:00:00', '17', 4),
+(7, '2023-04-22 14:00:00', '29', 6),
+(8, '2023-04-22 15:00:00', '20', 1),
+(9, '2023-04-22 16:00:00', '44', 4),
+(10, '2023-04-22 17:00:00', '61', 5),
+(11, '2023-04-22 18:00:00', '12', 2);
+
+
+
+--
+-- Índices para tablas
 --
 
 --
--- Indexes for table `Devices`
+-- Indices de la tabla 'Dispositivos'
 --
-ALTER TABLE `Devices`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `Dispositivos`
+  ADD PRIMARY KEY (`dispositivoId`,`electrovalvulaId`),
+  ADD KEY `fk_Dispositivos_Electrovalvulas1_idx` (`electrovalvulaId`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Indices de la tabla `Electrovalvulas`
 --
+ALTER TABLE `Electrovalvulas`
+  ADD PRIMARY KEY (`electrovalvulaId`);
 
 --
--- AUTO_INCREMENT for table `Devices`
+-- Indices de la tabla `Log_Riegos`
 --
-ALTER TABLE `Devices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-COMMIT;
+ALTER TABLE `Log_Riegos`
+  ADD PRIMARY KEY (`logRiegoId`,`electrovalvulaId`),
+  ADD KEY `fk_Log_Riegos_Electrovalvulas1_idx` (`electrovalvulaId`);
+
+--
+-- Indices de la tabla `Mediciones`
+--
+ALTER TABLE `Mediciones`
+  ADD PRIMARY KEY (`medicionId`,`dispositivoId`),
+  ADD KEY `fk_Mediciones_Dispositivos_idx` (`dispositivoId`);
+
+
+--
+-- AUTO_INCREMENT para las tablas
+--
+
+
+--
+-- AUTO_INCREMENT de la tabla `Dispositivos`
+--
+ALTER TABLE `Dispositivos`
+  MODIFY `dispositivoId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `Electrovalvulas`
+--
+ALTER TABLE `Electrovalvulas`
+  MODIFY `electrovalvulaId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `Log_Riegos`
+--
+ALTER TABLE `Log_Riegos`
+  MODIFY `logRiegoId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `Mediciones`
+--
+ALTER TABLE `Mediciones`
+  MODIFY `medicionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
