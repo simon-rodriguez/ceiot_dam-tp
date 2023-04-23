@@ -27,11 +27,12 @@ export class DispositivoPage implements OnInit {
 //    observable$: Observable<any>
 //    subscription: Subscription
     private aperturaValvula: number = 1
-    public valvulaAbierta = true
+    public valvulaAbierta = false
     dispositivos: any = []
     mediciones: any = []
     dispositivoId: string = ''
     ready: boolean = false;
+    intervalo: any;
 
 
 
@@ -40,15 +41,9 @@ export class DispositivoPage implements OnInit {
         this.getMedicionLog();
         setTimeout(()=>{
             this.valorObtenido = parseFloat(this.mediciones[0].valor)
-            console.log("Cambio el valor del sensor");
-            //llamo al update del chart para refrescar y mostrar el nuevo valor
+            console.log("Medicion Inicial");
             this.refreshChart();
           },3000);
-
-        //        this.observable$ = interval(1000)
-//        this.subscription = this.observable$.subscribe((integer) => {
-//          console.log(integer)
-//        })
     }
 
     ngOnInit() { 
@@ -62,7 +57,13 @@ export class DispositivoPage implements OnInit {
         .catch((error) => {
             console.log(error)
             this.ready = false;
-          })
+        });
+        
+        this.intervalo = setInterval(() => {
+            this.getMedicionSensor();
+            this.refreshChart();
+            }, 5000);
+
     }
 
     ionViewWillEnter () {
@@ -155,20 +156,30 @@ export class DispositivoPage implements OnInit {
         this.myChart = Highcharts.chart('highcharts', this.chartOptions );
     }
 
+    // Optiene la ultima medición en el registro.
     getMedicionLog () {
         this.dispositivoId = this.rutaActiva.snapshot.paramMap.get('id')!;
         this._DispositivoService.getUltimaMedicion(parseInt(this.dispositivoId))
         .then((respuesta:any) => {
+            console.log("getMedicionLog ejecutado")
             console.log(respuesta)
             this.mediciones = respuesta;
+            return this.mediciones;
         })
         .catch((error) => {
             console.log(error)
           })
     }
 
-    getMedicionSensor (deviceid:number) {
+    // Obtiene la última medición en el sensor (o simulación)
+    getMedicionSensor () {
+        this.getMedicionLog();
+        console.log("Sensor simulado")
+        console.log(this.valorObtenido)
+        this.valorObtenido = parseFloat(this.mediciones[0].valor)
         this.valorObtenido = this.valorObtenido + 1
+        console.log("Nuevo valor: ", this.valorObtenido)
+        this._DispositivoService.logUltimaMedicion(parseInt(this.dispositivoId), this.valorObtenido);
         return this.valorObtenido;
     }
 
@@ -183,28 +194,14 @@ export class DispositivoPage implements OnInit {
         console.log("Válvula cerrada")
         this.aperturaValvula = 0;
         this._DispositivoService.logAccionarValvula(parseInt(this.dispositivoId), this.aperturaValvula);
-        const ultimaMedicion = this.getMedicionSensor(parseInt(this.dispositivoId));
+        const ultimaMedicion = this.getMedicionSensor();
         this._DispositivoService.logUltimaMedicion(parseInt(this.dispositivoId), ultimaMedicion);
         this.valvulaAbierta = false;
     }
 
-/*
-    subscribe() {
-        this.subscription = this.observable$.subscribe((integer) => {
-            console.log(integer)
-        })
-    }
-    
-    unsubscribe() {
-        this.subscription.unsubscribe()
-    }
-
-
-
     ngOnDestroy(): void {
-        this.subscription.unsubscribe()
+        clearInterval(this.intervalo);
     }
 
-*/
 
 }
