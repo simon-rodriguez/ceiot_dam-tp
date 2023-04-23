@@ -187,6 +187,7 @@ export class DispositivoPage implements OnInit {
         this.aperturaValvula = 1;
         console.log("Válvula abierta");
         this._DispositivoService.logAccionarValvula(parseInt(this.dispositivoId), this.aperturaValvula);
+        
         this.valvulaAbierta = true;
     }
 
